@@ -28,22 +28,18 @@ class SubsciptionSeeder extends Seeder
         ]);
         DB::table('subscription_website')->insert([
             [
-                'id' => 1,
                 'subscription_id' => 1,
                 'website_id' => 1,
             ],
             [
-                'id' => 2,
                 'subscription_id' => 2,
                 'website_id' => 1,
             ],
             [
-                'id' => 3,
                 'subscription_id' => 1,
                 'website_id' => 2,
             ],
             [
-                'id' => 4,
                 'subscription_id' => 2,
                 'website_id' => 2,
             ]

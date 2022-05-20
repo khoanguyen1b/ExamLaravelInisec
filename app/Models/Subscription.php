@@ -23,13 +23,13 @@ class Subscription extends Model
         return $this->belongsToMany(Website::class);
     }
 
-    public static function createASubscription($request,$website_id)
+    public static function subscribe($request,$website_id)
     {
         $subscription = new Subscription();
         $subscription->full_name_owner = $request['full_name_owner'];
         $subscription->email = $request['email'];
         $subscription->save();
-        $subscription->websites()->attach($website_id);
+        $subscription->websites()->sync([$website_id],false);
         return $subscription ?? false;
     }
 
@@ -73,6 +73,21 @@ class Subscription extends Model
         }
         $subscriptionIds = DB::table('subscription_website')
             ->where('website_id', $website_id)
+            ->get()->pluck('subscription_id')->toArray();
+        return $subscriptionIds;
+    }
+
+    public function checkSubscribeByEmail($email)
+    {
+        $subscription = self::query()->where('email',$email)->first();
+        return $subscription ?? false;
+    }
+
+    public function checkSubscribedBySubscribeId($subscription_id,$website_id)
+    {
+        $subscriptionIds = DB::table('subscription_website')
+            ->where('website_id', $website_id)
+            ->where('subscription_id', $subscription_id)
             ->get()->pluck('subscription_id')->toArray();
         return $subscriptionIds;
     }

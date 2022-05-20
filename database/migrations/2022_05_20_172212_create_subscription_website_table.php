@@ -14,9 +14,9 @@ class CreateSubscriptionWebsiteTable extends Migration
     public function up()
     {
         Schema::create('subscription_website', function (Blueprint $table) {
-            $table->id();
             $table->string('subscription_id');
             $table->string('website_id');
+            $table->primary(array('subscription_id', 'website_id'));
         });
     }
 

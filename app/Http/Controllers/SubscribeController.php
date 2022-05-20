@@ -25,11 +25,16 @@ class SubscribeController extends Controller
                     'message' => 'Cannot find website'
                 ], 404);
             }
-            $subscription = Subscription::createASubscription($request->all(),$website_id);
+            $subscription = new Subscription();
+            $subscription = $subscription->checkSubscribeByEmail($request->all()['email']);
+            if($subscription) {
+                $subscription->websites()->sync([$website_id],false);
+            }else{
+                Subscription::subscribe($request->all(),$website_id);
+            }
             DB::commit();
             return response()->json([
-                'message' => 'Subscription Success !',
-                'data' => $subscription
+                'message' => 'Subscription Success !'
             ], 200);
         }catch (\Exception $e){
             DB::rollBack();
@@ -44,7 +49,7 @@ class SubscribeController extends Controller
     {
         $validator = Validator::make($request, [
             'full_name_owner' => 'required',
-            'email' => 'required|unique:subscriptions|email',
+            'email' => 'required|email',
             'domain' => 'required|max:50|min:3',
         ]);
         if ($validator->fails()) {
